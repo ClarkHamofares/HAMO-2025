@@ -1,0 +1,48 @@
+/* تنسيق الصفحة بشكل عام */
+body {
+  font-family: 'Tajawal', sans-serif;
+  background: linear-gradient(to bottom right, #e0f7fa, #f0fff0);
+  color: #333;
+  margin: 0;
+  padding: 0;
+  direction: rtl;
+}
+
+header {
+  background: #00796b;
+  color: white;
+  padding: 20px;
+  text-align: center;
+  font-size: 24px;
+}
+
+.section {
+  display: none; /* إخفاء الأقسام بشكل افتراضي */
+  padding: 20px;
+}
+
+/* القسم النشط فقط يتم عرضه */
+.active {
+  display: block;
+}
+
+.icon-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #00796b;
+  text-align: center;
+  padding: 10px 0;
+}
+
+.icon-bar i {
+  color: white;
+  font-size: 30px;
+  margin: 0 15px;
+  cursor: pointer;
+}
+
+.icon-bar i:hover {
+  color: #004d40;
+}
