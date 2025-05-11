@@ -1,109 +1,75 @@
-body, html {
+body {
+  font-family: 'Arial', sans-serif;
   margin: 0;
   padding: 0;
-  font-family: 'Arial', sans-serif;
-  height: 100%;
-  background: #f0f0f0;
-  overflow-x: hidden;
-}
-
-.page {
-  display: none;
-  padding: 20px;
-  height: calc(100vh - 60px);
-  overflow-y: auto;
-}
-
-.page.active {
-  display: block;
-}
-
-h2 {
-  text-align: center;
+  background-color: #f4f4f4;
   color: #333;
 }
 
-#prayer-times div {
-  background: #fff;
-  margin: 5px 0;
+.container {
+  padding: 20px;
+  padding-bottom: 100px;
+}
+
+.main-content {
+  display: none;
+}
+
+.main-content.active {
+  display: block;
+}
+
+ul#prayer-times {
+  list-style: none;
+  padding: 0;
+  font-size: 18px;
+}
+
+ul#prayer-times li {
   padding: 10px;
-  border-radius: 10px;
-  font-size: 18px;
-  text-align: right;
+  border-bottom: 1px solid #ccc;
 }
 
-.highlight {
-  background-color: #fff176; /* أصفر */
+ul#prayer-times li.next {
+  background-color: #ffff99;
   font-weight: bold;
-}
-
-#countdown {
-  text-align: center;
-  margin-top: 10px;
-  font-size: 20px;
-  color: #ff9800;
-}
-
-.iframe-container {
-  width: 100%;
-  height: 85vh;
-  overflow: hidden;
-}
-
-.iframe-container iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-}
-
-.tasbeeh-box {
-  text-align: center;
-  margin-top: 40px;
-}
-
-#tasbeeh-count {
-  font-size: 60px;
-  margin-bottom: 20px;
-}
-
-.tasbeeh-box button {
-  padding: 10px 20px;
-  margin: 5px;
-  font-size: 18px;
-  border: none;
-  border-radius: 8px;
-  background-color: #4caf50;
-  color: white;
 }
 
 .bottom-nav {
   position: fixed;
   bottom: 0;
   width: 100%;
-  background-color: #ffffff;
   display: flex;
   justify-content: space-around;
+  background-color: #fff;
   border-top: 1px solid #ccc;
-  height: 60px;
+  padding: 10px 0;
 }
 
 .bottom-nav button {
-  flex: 1;
-  border: none;
   background: none;
+  border: none;
   font-size: 16px;
-  color: #333;
 }
 
-#compass-container {
+.sebha-container {
   text-align: center;
-  margin-top: 40px;
+  margin-top: 50px;
 }
 
-#compass {
-  width: 200px;
-  height: 200px;
-  background-color: #ffffff;
-  border-radius: 50%;
-  border: 2px solid #000;
+.sebha-container #count {
+  font-size: 48px;
+  display: block;
+  margin-bottom: 20px;
+}
+
+.sebha-container button {
+  font-size: 20px;
+  padding: 10px 20px;
+  margin: 10px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
 }
