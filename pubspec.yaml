@@ -1,0 +1,19 @@
+
+name: prayer_times_app
+description: تطبيق يعرض مواقيت الصلاة ويُشغل الأذان تلقائيًا
+publish_to: 'none'
+
+environment:
+  sdk: ">=2.17.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  adhan: ^2.0.0
+  flutter_local_notifications: ^15.1.0
+  android_alarm_manager_plus: ^3.0.3
+
+flutter:
+  assets:
+    - assets/sounds/adhan.mp3
+  uses-material-design: true
