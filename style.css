@@ -1,0 +1,95 @@
+body {
+  margin: 0;
+  font-family: 'Cairo', sans-serif;
+  background: linear-gradient(to bottom, #e8f0ff, #ffffff);
+  color: #222;
+}
+
+header {
+  background: linear-gradient(90deg, #1877f2, #3b5998);
+  color: white;
+  text-align: center;
+  padding: 30px 20px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+}
+
+header h1 {
+  margin: 0;
+  font-size: 34px;
+}
+
+header p {
+  margin: 10px 0 0;
+  font-size: 18px;
+  color: #dbe9ff;
+}
+
+.container {
+  max-width: 500px;
+  margin: 30px auto;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  background: white;
+  padding: 18px 20px;
+  border-radius: 14px;
+  text-decoration: none;
+  color: #333;
+  font-size: 20px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+  position: relative;
+  overflow: hidden;
+}
+
+.card i {
+  font-size: 28px;
+  margin-left: 16px;
+  color: white;
+  padding: 10px;
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  text-align: center;
+  line-height: 25px;
+}
+
+.card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+}
+
+/* ألوان مميزة لكل منصة */
+.facebook i {
+  background: #1877f2;
+}
+
+.tiktok i {
+  background: linear-gradient(45deg, #000, #ff0050, #00f2ea);
+}
+
+.whatsapp i {
+  background: #25d366;
+}
+
+.instagram i {
+  background: radial-gradient(circle at 30% 30%, #feda75, #d62976, #962fbf, #4f5bd5);
+}
+
+.telegram i {
+  background: #0088cc;
+}
+
+footer {
+  text-align: center;
+  padding: 25px 10px;
+  color: #777;
+  font-size: 14px;
+}
