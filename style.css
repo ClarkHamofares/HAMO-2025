@@ -66,7 +66,7 @@ header p {
   box-shadow: 0 6px 20px rgba(0,0,0,0.1);
 }
 
-/* ألوان مميزة لكل منصة */
+/* ألوان مخصصة لكل منصة */
 .facebook i {
   background: #1877f2;
 }
@@ -85,6 +85,10 @@ header p {
 
 .telegram i {
   background: #0088cc;
+}
+
+.phone i {
+  background: #00bcd4;
 }
 
 footer {
