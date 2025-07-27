@@ -1,74 +1,72 @@
 body {
   margin: 0;
+  padding: 0;
   font-family: 'Cairo', sans-serif;
-  background: linear-gradient(to bottom, #e8f0ff, #ffffff);
-  color: #222;
+  background: linear-gradient(to bottom, #f0f4ff, #e0e7ff);
+  color: #333;
+}
+
+.wrapper {
+  max-width: 500px;
+  margin: auto;
+  padding: 20px;
 }
 
 header {
-  background: linear-gradient(90deg, #1877f2, #3b5998);
-  color: white;
   text-align: center;
-  padding: 30px 20px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+  margin-bottom: 30px;
 }
 
 header h1 {
-  margin: 0;
-  font-size: 34px;
+  font-size: 32px;
+  color: #4a00e0;
 }
 
 header p {
-  margin: 10px 0 0;
   font-size: 18px;
-  color: #dbe9ff;
+  color: #666;
 }
 
-.container {
-  max-width: 500px;
-  margin: 30px auto;
-  padding: 10px;
+main {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 15px;
 }
 
 .card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s ease;
+}
+
+.card a {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  background: white;
-  padding: 18px 20px;
-  border-radius: 14px;
+  gap: 14px;
+  padding: 16px 20px;
   text-decoration: none;
-  color: #333;
+  color: #222;
   font-size: 20px;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.06);
-  position: relative;
-  overflow: hidden;
+  font-weight: 600;
 }
 
 .card i {
-  font-size: 28px;
-  margin-left: 16px;
-  color: white;
-  padding: 10px;
-  border-radius: 50%;
-  width: 45px;
-  height: 45px;
+  font-size: 24px;
+  width: 36px;
+  height: 36px;
   text-align: center;
-  line-height: 25px;
+  line-height: 36px;
+  border-radius: 50%;
+  color: white;
 }
 
 .card:hover {
   transform: scale(1.03);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
 }
 
-/* ألوان مخصصة لكل منصة */
 .facebook i {
-  background: #1877f2;
+  background-color: #1877f2;
 }
 
 .tiktok i {
@@ -76,7 +74,7 @@ header p {
 }
 
 .whatsapp i {
-  background: #25d366;
+  background-color: #25d366;
 }
 
 .instagram i {
@@ -84,16 +82,16 @@ header p {
 }
 
 .telegram i {
-  background: #0088cc;
+  background-color: #0088cc;
 }
 
 .phone i {
-  background: #00bcd4;
+  background-color: #00bcd4;
 }
 
 footer {
   text-align: center;
-  padding: 25px 10px;
-  color: #777;
+  margin-top: 30px;
   font-size: 14px;
+  color: #777;
 }
